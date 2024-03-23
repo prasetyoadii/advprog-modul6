@@ -110,3 +110,11 @@ as Commit 4 Reflection notes. Commit your work with message
 “(4) Simulation of slow request. “**
 
 Pada fungsi `handle_connection` yang baru, penggunaan `match` digunakan untuk mencocokan nilai dari `request_line` dengan beberapa pola yang telah ditentukan, termasuk `/`, `/sleep`, dan kasus lainnya. Saat endpoint baru `/sleep` diakses, server akan menunda pemrosesan selama 10 detik dengan `thread::sleep(Duration::from_secs(10));`, menunjukkan bagaimana server yang bersifat single-threaded dapat mengalami penundaan dalam merespons permintaan yang membutuhkan waktu lebih lama untuk diproses. Dalam simulasi *slow response* ini, pengguna yang membuka dua *browser windows* dan mengakses `/sleep` dan `/` secara bergantian akan mengalami penundaan karena sifat *single-threaded* dari server, dimana pemrosesan request berurutan dan tidak bisa dilakukan secara simultan. Jadi, penggunaan *single thread* pada server dapat menyebabkan penundaan dalam merespons request lainnya dan mengganggu pengalaman pengguna yang memerlukan respon cepat.
+
+## Commit 5
+**[Commit] Add additional reflection notes, put the title clearly such
+as Commit 5 Reflection notes. Commit your work with message
+“(5) Multithreaded server using Threadpool “**
+
+
+Untuk mengimplementasikan sistem yang efisien dengan menggunakan multithreading, diperlukan pembuatan sebuah ThreadPool yang mampu menangani berbagai permintaan secara simultan. ThreadPool dibangun dengan ukuran tertentu untuk menentukan jumlah thread pekerja, dan dilengkapi dengan mekanisme komunikasi menggunakan channel `(mpsc::channel)` untuk berkomunikasi antara utas utama dan pekerja. Setiap thread pekerja memiliki loop tak terbatas yang menunggu pekerjaan, sehingga saat pekerjaan diterima, thread pekerja akan mengeksekusinya. Pada saat eksekusi tugas, thread utama mengirimkan job ke salah satu thread pekerja melalui channel, dan job tersebut dieksekusi oleh thread pekerja. Selain itu, penggunaan `Arc<Mutex<mpsc::Receiver<Job>>>` memungkinkan pembagian receiver channel secara aman di antara semua thread pekerja, sehingga beberapa thread dapat mengakses receiver channel dengan aman. Dengan demikian, thread pool dapat mengelola sejumlah tetap pekerja, dan job dapat dieksekusi secara bersamaan oleh thread pekerja, memberikan mekanisme sederhana untuk eksekusi tugas secara paralel.
