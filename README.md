@@ -103,3 +103,10 @@ commit.**
     ```
 4. berikut merupakan hasil screenshot
 ![Commit 3 screen capture](/assets/images/commit3.jpg)
+
+## Commit 4
+**[Commit] Add additional reflection notes, put the title clearly such
+as Commit 4 Reflection notes. Commit your work with message
+“(4) Simulation of slow request. “**
+
+Pada fungsi `handle_connection` yang baru, penggunaan `match` digunakan untuk mencocokan nilai dari `request_line` dengan beberapa pola yang telah ditentukan, termasuk `/`, `/sleep`, dan kasus lainnya. Saat endpoint baru `/sleep` diakses, server akan menunda pemrosesan selama 10 detik dengan `thread::sleep(Duration::from_secs(10));`, menunjukkan bagaimana server yang bersifat single-threaded dapat mengalami penundaan dalam merespons permintaan yang membutuhkan waktu lebih lama untuk diproses. Dalam simulasi *slow response* ini, pengguna yang membuka dua *browser windows* dan mengakses `/sleep` dan `/` secara bergantian akan mengalami penundaan karena sifat *single-threaded* dari server, dimana pemrosesan request berurutan dan tidak bisa dilakukan secara simultan. Jadi, penggunaan *single thread* pada server dapat menyebabkan penundaan dalam merespons request lainnya dan mengganggu pengalaman pengguna yang memerlukan respon cepat.
